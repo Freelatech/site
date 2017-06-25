@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="{{url_for('static', filename='CSS/construcao.css')}}">{% endblock %}
+
+{% block title %}Em construçao{% endblock %}
+
+{% block main %}
+
+<div id="outer">
+    <div id="image">
+        
+    </div>
+    <div id="butdiv">
+        <a href="{{url_for('index')}}"><button class="btn btn-lg btn-warning center" id="button">Voltar a pagina inicial</button></a>
+    </div>
+</div>
+
+{% endblock %}
+    
+    
+{% block scripts %}<script src="{{url_for('static', filename='Js/construcao.js')}}"></script>{% endblock %}

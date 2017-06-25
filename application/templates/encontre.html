@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="">{% endblock %}
+
+{% block title %}    {% endblock %}
+
+{% block main %}
+    <div>
+        <form id="filters">
+        <fieldset>
+            <div class="formgroup">
+                  <input type="radio" name="classe" value="Advogado" checked>Advogado<br>
+                  <input type="radio" name="classe" value="Contador">Contador<br>
+                  <input type="radio" name="classe" value="Professor">Professor<br>
+                  <p id="classe"></p>
+            </div>
+            <div class="formgroup">
+                  <input type="radio" name="subclasse" value="sub1" checked>Subclasse 1<br>
+                  <input type="radio" name="subclasse" value="sub2">Subclasse 2<br>
+                  <input type="radio" name="subclasse" value="sub3">Subclasse 3<br>
+                  <p id="subclasse"></p>
+            </div>
+            <div class="form-group">
+                <p id="geral" class="jsholders"></p>
+                <button class="btn btn-default" type="submit" onclick="return teste()">Filtrar</button>
+            </div>
+        </fieldset>
+        </form>
+        {% if message %}
+        <h1>{{message}}</h1>
+        {% endif %}
+    </div>
+<div id="parent">
+</div>
+{% endblock %}
+    
+    
+{% block scripts %}<script src="{{url_for('static', filename='Js/encontre.js')}}"></script>{% endblock %}

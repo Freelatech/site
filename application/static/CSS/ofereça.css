@@ -1,0 +1,73 @@
+.bd{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#land{
+  height: 100vh;
+  background-image: url("/static/Images/backimg.jpg");
+  background-position: center center;
+  font-family: Roboto;
+  color: white;
+  margin: 0px;
+}
+
+#land #texts{
+  position: relative;
+  top: 40vh;
+  width: 60%;
+  text-align: center;
+  margin: auto;
+}
+
+#land #texts h1{
+  font-size: 4em;
+}
+
+.ttl{
+  text-align: center;
+  padding: 20px;
+}
+
+#hiw{
+  color: white;
+  background-color: #027CD5;
+  text-align: center;
+}
+
+#mdp div{
+  text-align: center;
+}
+
+#mdp img{
+  display: block;
+  margin: auto;
+  width: 50%;
+  height: 140px;
+}
+#upi{
+  text-align: center;
+  background-color: #027CD5;
+  color: white;
+}
+#upi h1{
+  padding: 20px;
+}
+#usst #imdiv{
+  width: 100%;
+  height: 70vh;
+  background-size:cover;
+  /*background-position:center center;*/
+  background-repeat:no-repeat;
+  background-image:url('/static/Images/ppl2.jpg');
+}
+
+#usst #ustxd{
+  display: flex;
+  align-items: center;
+}
+
+#usst{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}

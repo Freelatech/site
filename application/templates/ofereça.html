@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="{{ url_for('static', filename='CSS/ofereça.css') }}">{% endblock %}
+
+{% block title %}Landing Page{% endblock %}
+
+{% block main %}
+    <div id="land" class="bd">
+      <div id="texts">
+        <h1><b>O trabalho que você precisa</b></h1>
+        <h3>Trabalhe com o que você gosta, quando e onde quiser<h3>
+        <a href="{{url_for('entrar')}}"><button class="btn btn-lg btn-primary" id="entre">Entre agora</button></a>
+      </div>
+    </div>
+    <div id="hiw" class="bd">
+      <h1 class="ttl">Como funciona?</h1>
+      <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12">
+          <h3>1.Cadastre-se no site</h3>
+          <p>É rápido, basta fazer sua apresentação, em texto e/ou vídeo</p>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+          <h3>2.Escolha um horário</h3>
+          <p>Se disponibilize nos horários que achar conveniente</p>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+          <h3>3.Converse</h3>
+          <p>Você pode usar a plataforma disponiblizada pelo site ou o Google Hangouts</p>
+        </div>
+      </div>
+    </div>
+  
+    <div id="upi" clas="bd">
+      <h1>Uma plataforma inovadora</h1>
+      <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12">
+          <h3>Totalmente digital</h3>
+          <p>Trabalhe sem precisar sair de casa, basta ter uma webcam e microfone</p>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+          <h3>Flexível</h3>
+          <p>Seja seu próprio chefe, escolha seus horários e seus preços</p>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+          <h3>Sem taxa de inscrição</h3>
+          <p>Não há taxa de inscrição ou taxas fixas, nem para profissionais, nem para usuários, só paga pelo que utilizar</p>
+        </div>
+      </div>
+    </div>
+    <div id="usst">
+      <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12" id="imdiv"></div>
+        <div class="col-md-6 col-sm-6 col-xs-12" id="ustxd">
+            <div>
+            <h3>Com essa plataforma, eu pude trabalhar de uma forma totalmente inovadora, fazendo o mesmo serviço que consultoria
+            que sempre fiz, sem que eu ou meus clientes precisassem sair de casa, sem perder tempo ou dinheiro</h3>
+            <p>Julia Oliveira | Consultora | Itumbiara-GO</p>
+            </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+    
+    
+    {% block scripts %}<script src="{{url_for('static', filename='Js/ofereça.js')}}"></script>{% endblock %}
+

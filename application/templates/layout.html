@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{ JSGlue.include() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/layout.css') }}">
+    {% block stylesheet %}{% endblock %}
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Usomix: {% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-faded navbar-toggleable-sm wgreen" id="nav">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+	    <a class="navbar-brand" href="{{url_for('index')}}">Usomix</a>
+	    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+			    <li id="" class="nav-item"><a href="{{url_for ('encontre') }}" class="nav-link">ENCONTRE UM PROFISSIONAL</a></li>
+          <li id="" class="nav-item"><a href="{{url_for ('ofereça') }}" class="nav-link">OFEREÇA SERVIÇOS</a></li>
+          <li id="" class="nav-item"><a href="{{url_for ('teste') }}" class="nav-link">TESTE</a></li>
+            {% if session["user_id"] %}
+          <!--<li id="" class="nav-item fr"><a href="{{url_for ('sair')}}" class="nav-link">SAIR</a></li>-->
+          <!--<li id="" class="nav-item fr"><a href="{{url_for ('registrar')}}" class="nav-link">{{session["user_name"]}}</a></li>-->
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{session["user_name"]}}</button>
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="{{url_for('perfil')}}">Perfil</a></li>
+                <li><a href="{{url_for('index')}}">Configurações</a></li>
+                <li><a href="{{url_for('sair')}}">Sair</a></li>
+              </ul>
+            </div>
+            {% else %}
+          <li id="" class="nav-item fr"><a href="{{url_for ('entrar', dest=request.endpoint)}}" class="nav-link">ENTRE</a></li>
+          <li id="" class="nav-item fr"><a href="{{url_for ('registrar')}}" class="nav-link">REGISTRE-SE</a></li>
+            {% endif %}
+        </ul>
+  	  </div>
+    </nav>
+    {% block main %}{% endblock %}
+    <footer>
+        <div class="row justify-content-center">
+          <div class="col-md-2 col-sm-3 col-xs-6">
+            <h4><b>Usomix</b></h4>
+            <p><a href="{{url_for ('blog') }}">Blog</a></p>
+            <p><a href="{{url_for ('termos') }}">Termos de serviço</a></p>
+            <p><a href="{{url_for ('privacidade')}}">Políticas de Privacidade</a></p>
+          </div>
+          <div class="col-md-2 col-sm-3 col-xs-6">
+            <h4><b>Ajuda</b></h4>
+            <p><a href="{{url_for ('FAQ') }}">FAQ</a></p>
+            <p><a href="{{url_for ('suporte') }}">Suporte</a></p>
+          </div>
+          <div class="col-md-2 col-sm-3 col-xs-6">
+            <h4><b>Mais</b></h4>
+            <p><a href="{{url_for ('sugestoes')}}">Sugestões</a></p>
+            <p><a href="{{url_for ('indique')}}">Indique a um amigo</a></p>
+            <p><a href="{{url_for ('trabalhe')}}">Trabalhe conosco</a></p>
+          </div>
+          <div class="col-md-2 col-sm-3 col-xs-6">
+            <h4><b>Social</b></h4>
+            <p><a href="http://www.facebook.com">Facebook</a></p>
+            <p><a href="http://www.twitter.com">Twitter</a></p>
+          </div>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+    <script src="{{url_for('static', filename='Js/layout.js')}}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

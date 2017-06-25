@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="{{url_for('static', filename='CSS/nos.css')}}">{% endblock %}
+
+{% block main %}
+{% include route+".html" %}
+{% endblock %}
+    
+    
+{% block scripts %}<script src="{{url_for('static', filename='Js/')}}"></script>{% endblock %}

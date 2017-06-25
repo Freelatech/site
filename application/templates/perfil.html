@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="">{% endblock %}
+
+{% block title %}    {% endblock %}
+
+{% block main %}
+<div>
+    <form action="{{ url_for('perfil') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <label for=nome>Email:</label>
+                <input id="email" autocomplete="off" autofocus class="form-control" name="email" placeholder="Ex: example@example.com" type="text" value="{{email}}"/>
+            </div>
+            <div class="form-group">
+                <label for=nome>Nome:</label>
+                <input id="nome" autocomplete="off" autofocus class="form-control" name="nome" placeholder="Ex: João" type="text" value="{{fullname}}"/>
+            </div>
+            <div class="form-group">
+                <label for=nome>Telefone:</label>
+                <input id="telefone" autocomplete="off" autofocus class="form-control" name="telefone" placeholder="Ex: (12)3456-7890" type="text" value="{{telefone}}"/>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default" type="submit">Salvar</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}
+    
+    
+{% block scripts %}<script src=""></script>{% endblock %}

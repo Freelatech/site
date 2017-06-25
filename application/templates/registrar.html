@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="{{url_for('static', filename='CSS/registrar.css')}}">{% endblock %}
+
+{% block title %}    {% endblock %}
+
+{% block main %}    
+    <div>
+    <form action="{{ url_for('registrar') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input id="emailf" autocomplete="off" autofocus class="form-control" name="email" placeholder="E-mail" type="text"/>
+                <p id="email" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="nomef" autocomplete="off" autofocus class="form-control" name="username" placeholder="Nome" type="text"/>
+                <p id="nome" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="senhaf" class="form-control" name="password" placeholder="Senha(min 6 caracteres)" type="password"/>
+                <p id="senha" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="senha1f" class="form-control" name="password2" placeholder="Confirme a senha" type="password"/>
+                <p id="senha1" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <p id="geral" class="jsholders"></p>
+                <button class="btn btn-default" type="submit">Registrar</button>
+            </div>
+        </fieldset>
+    </form>
+    {% if message %}
+        <h1>{{message}}</h1>
+    {% endif %}
+    </div>
+{% endblock %}
+    
+    
+{% block scripts %}<script src="{{url_for('static', filename='Js/io.js')}}"></script><script src="{{url_for('static', filename='Js/registrar.js')}}"></script>{% endblock %}
+ 
+    

@@ -1,0 +1,29 @@
+
+#image{
+    height: 350px;
+    background-image: url("http://lojamonica.com.br/site_em_construcao.jpg");
+    width: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0
+}
+
+#butdiv{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+#button{
+    width: 500px;
+}
+
+#nav{
+    background-color: white;
+    top: 0px;
+    height: 100px;
+}

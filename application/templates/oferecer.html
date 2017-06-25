@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="">{% endblock %}
+
+{% block title %}Ofereça serviços{% endblock %}
+
+{% block main %}
+    <div>
+        <form id="offerform" action="{{ url_for('ofereça') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input id="nomeserf" autocomplete="off" autofocus class="form-control" name="nomeser" placeholder="Nome do serviço" type="text"/>
+                <p id="nomeser" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="imageurlf" autocomplete="off" autofocus class="form-control" name="imageurl" placeholder="Image url" type="text"/>
+                <p id="imageurlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="videourlf" autocomplete="off" autofocus class="form-control" name="videourl" placeholder="Video url" type="text"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div id="classes" class="formgroup">
+                {% for class in classes %}
+                    {% if classes[class]!="Outros" %}    
+                    <input type="radio" name="classe" value="{{class}}">{{classes[class]}}<br>
+                    {% endif %}
+                {% endfor %}
+                <input type="radio" name="classe" value=1>Outros<br>
+            </div>
+            <div id=subclasses class="formgroup">
+            </div>
+            <div class="form-group">
+                <p id="geral" class="jsholders"></p>
+                <button class="btn btn-default" type="submit">Oferecer</button>
+            </div>
+        </fieldset>
+        </form>
+        <textarea form="serviceform" id="description" autocomplete="off" class="form-control" name="description" placeholder="Descrição" type="text" rows=9></textarea>
+        {% if message %}
+        <h1>{{message}}</h1>
+        {% endif %}
+    </div>
+{% endblock %}
+    
+    
+{% block scripts %}<script src="{{url_for('static', filename='Js/oferecer.js')}}"></script>{% endblock %}
