@@ -3,9 +3,8 @@ from application import db
 class Agendamento(db.Model):
     __tablename__='agendamentos'
     id=db.Column(db.Integer, primary_key=True)
-    orig_user_id=db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    dest_user_id=db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    service_id=db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    dest_user_id=db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False) 
+    service_id=db.Column(db.Integer, db.ForeignKey("services.id"), nullable=False)
     horario=db.Column(db.Text, nullable=False)
 
 class Auth(db.Model):
@@ -20,19 +19,21 @@ class Classe(db.Model):
     __tablename__='classes'
     id=db.Column(db.Integer, primary_key=True)
     nome=db.Column(db.String)
+    subclasses = db.relationship('Subclasse', backref='classe', lazy='dynamic')
+    diferenciais = db.relationship('Diferencial', backref='classe', lazy='dynamic')
     
 class Diferencial(db.Model):
     __tablename__='diferenciais'
     id=db.Column(db.Integer, primary_key=True)
-    class_id=db.Column(db.Integer, db.ForeignKey("classes.id"), nullable=False)
+    classe_id=db.Column(db.Integer, db.ForeignKey("classes.id"), nullable=False)
     nome=db.Column(db.String)
         
 class Opfin(db.Model):
     __tablename__='opfin'
     id=db.Column(db.Integer, primary_key=True)
     user_id=db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    value=db.Column(db.Numeric(8,2), nullable=False)
-    tipo=db.Column(db.String, nullable=False)
+    valor=db.Column(db.Numeric(8,2), nullable=False)
+    tipo=db.Column(db.Integer, nullable=False)
     
 class Service(db.Model):
     __tablename__='services'
@@ -43,14 +44,16 @@ class Service(db.Model):
     videourl=db.Column(db.String)
     user_id=db.Column(db.Integer, db.ForeignKey("users.id"))
     horarios=db.Column(db.Text, nullable=False)
-    class_id=db.Column(db.Integer, db.ForeignKey("classes.id"))
     subclass_id=db.Column(db.Integer, db.ForeignKey("subclasses.id"))
+    status=db.Column(db.Integer)
+    agendados=db.relationship('Agendamento', backref='service', lazy='dynamic')
     
 class Subclasse(db.Model):
     __tablename__='subclasses'
     id=db.Column(db.Integer, primary_key=True)
     classe_id=db.Column(db.Integer, db.ForeignKey("classes.id"))
     nome=db.Column(db.String)
+    services=db.relationship('Service', backref='subclasse', lazy='dynamic')
     
 class Transaction(db.Model):
     __tablename__='transactions'
@@ -62,6 +65,8 @@ class Transaction(db.Model):
     dest_user=db.relationship('User', backref='transactasdest', foreign_keys=dest_user_id)
     dest_value=db.Column(db.Numeric(8,2), nullable=False)
     service_id=db.Column(db.Integer, db.ForeignKey("services.id"), nullable=False)
+    def __repr__(self):
+        return '%i' % (self.id)
     
 class User(db.Model):
     __tablename__ = 'users'
@@ -73,7 +78,11 @@ class User(db.Model):
     description = db.Column(db.Text, default="")
     money = db.Column(db.Numeric(8,2), default=0)
     services = db.relationship('Service', backref='author', lazy='dynamic')
+    agendamentos = db.relationship('Agendamento', backref='dest_user', lazy='dynamic')
     auth = db.relationship('Auth', backref='user', uselist=False)
+    operações = db.relationship('Opfin', backref='user', lazy='dynamic')
+    referrer_id = db.Column(db.Integer, db.ForeignKey(id))
+    referrees = db.relationship('User', backref=db.backref('referrer', remote_side='User.id'))
     def __repr__(self):
         return '<User %r>' % (self.email)
 

@@ -21,7 +21,6 @@ admin.add_view(ModelView(User, db.session))
 @app.route("/")
 def index():
     teste=User.query.all()
-    print(teste[0].auth.username)
     return render_template("index.html")
   
 @app.route("/blog")
@@ -239,6 +238,8 @@ def teste():
         db.session.commit()
         return render_template("teste.html")
     else:
+        teste=User.query.all()
+        print(teste[1].transactasdest[0])
         return render_template("teste.html")
     
 @app.route("/trabalhe")
