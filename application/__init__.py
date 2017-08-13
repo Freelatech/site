@@ -12,6 +12,12 @@ Session(app)
 db = SQLAlchemy(app)
 
 from application import views, models, forms, helpers
+from .views.admin import admin
+from .views.main import main
+app.register_blueprint(admin, url_prefix='/admin')
+app.register_blueprint(main, url_prefix='/main')
+
+
 
 helpers.env.globals['session'] = views.session
 
