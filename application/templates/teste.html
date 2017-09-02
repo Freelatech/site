@@ -8,11 +8,15 @@
 <div>
     <form action="{{ url_for('teste') }}" method="post">
         <fieldset>
-            <div class="formgroup">
-                  <input type="radio" name="classid" value="2" checked>Advogado<br>
-                  <input type="radio" name="classid" value="4">Contador<br>
-                  <input type="radio" name="classid" value="3">Professor<br>
-            </div>
+            <h2>Classe:</h2>
+                <div id="classes" class="formgroup">
+                {% for class in classes %}
+                    {% if classes[class]!="Outros" %}
+                    <input type="radio" name="classid" value="{{class}}">{{classes[class]}}<br>
+                    {% endif %}
+                {% endfor %}
+                <input type="radio" name="classe" value=1>Outros<br>
+          </div>
             <div class="form-group">
                 <label for=nome>Nome:</label>
                 <input id="nome" autocomplete="off" autofocus class="form-control" name="nome" placeholder="Nome" type="text"/>
@@ -25,6 +29,6 @@
     </form>
 </div>
 {% endblock %}
-    
-    
+
+
 {% block scripts %}<script src=""></script>{% endblock %}

@@ -1,1 +1,29 @@
-{% extends "construcao.html" %}
+{% extends "layout.html" %}
+
+{% block stylesheet %}<link rel="stylesheet" href="">{% endblock %}
+
+{% block title %}Suporte{% endblock %}
+
+{% block main %}
+<h3>Suporte</h3>
+<p>Deixe uma mensagem, tentaremos responder o mais brevemente possível</p>
+    <form id="suportform" action="{{url_for('suporte')}}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="email" placeholder="E-mail" type="text"/>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="nome" placeholder="Nome" type="text"/>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="assunto" placeholder="Assunto" type="text"/>
+            </div>
+            <input type="submit" id="submit-form" style="display:none" />
+        </fieldset>
+    </form>
+    <textarea form="suportform" id="description" autocomplete="off" class="form-control" name="mensagem" placeholder="Mensagem" type="text" rows=9></textarea>
+    <button class="btn btn-default" onclick="document.getElementById('submit-form').click()">Enviar sugestão</button></label>
+{% endblock %}
+    
+    
+{% block scripts %}<script src=""></script>{% endblock %}

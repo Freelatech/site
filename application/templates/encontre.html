@@ -1,25 +1,39 @@
 {% extends "layout.html" %}
 
-{% block stylesheet %}<link rel="stylesheet" href="">{% endblock %}
+{% block stylesheet %}<link rel="stylesheet" href="{{ url_for('static', filename='CSS/encontre.css') }}">{% endblock %}
 
 {% block title %}    {% endblock %}
 
 {% block main %}
     <div>
-        <form id="filters">
+        <form id="filtersform" method=GET action="{{ url_for('encontre')}}">
         <fieldset>
-            <div class="formgroup">
-                  <input type="radio" name="classe" value="Advogado" checked>Advogado<br>
-                  <input type="radio" name="classe" value="Contador">Contador<br>
-                  <input type="radio" name="classe" value="Professor">Professor<br>
-                  <p id="classe"></p>
-            </div>
-            <div class="formgroup">
-                  <input type="radio" name="subclasse" value="sub1" checked>Subclasse 1<br>
-                  <input type="radio" name="subclasse" value="sub2">Subclasse 2<br>
-                  <input type="radio" name="subclasse" value="sub3">Subclasse 3<br>
-                  <p id="subclasse"></p>
-            </div>
+        {{teste}}
+        <h2>Classe:</h2>
+            <div id="classes" class="formgroup">
+                {% for class in classes %}
+                    {% if classes[class]!="Outros" %}
+                    <input type="radio" name="classe" value="{{class}}">{{classes[class]}}<br>
+                    {% endif %}
+                {% endfor %}
+                <input type="radio" name="classe" value=1>Outros<br>
+          </div>
+        <h2>Subclasse:</h2>
+        <div id="subclasses"></div>
+        <h2>Dias da semana</h2>
+        <input type="checkbox" name=dia value=seg>Segunda<br>
+        <input type="checkbox" name=dia value=ter>Terça<br>
+        <input type="checkbox" name=dia value=qua>Quarta<br>
+        <input type="checkbox" name=dia value=qui>Quinta<br>
+        <input type="checkbox" name=dia value=sex>Sexta<br>
+        <input type="checkbox" name=dia value=sab>Sábado<br>
+        <input type="checkbox" name=dia value=dom>Domingo<br>
+        <h2>Horário</h2>
+        <input type="checkbox" name=hor value=mad>Madrugada<br>
+        <input type="checkbox" name=hor value=man>Manhã<br>
+        <input type="checkbox" name=hor value=tar>Tarde<br>
+        <input type="checkbox" name=hor value=noi>Noite<br>
+
             <div class="form-group">
                 <p id="geral" class="jsholders"></p>
                 <button class="btn btn-default" type="submit" onclick="return teste()">Filtrar</button>
@@ -31,8 +45,14 @@
         {% endif %}
     </div>
 <div id="parent">
+    <div id="card1">
+        <img src="https://pickaface.net/gallery/avatar/unr_oldman1_170209_2337_9r91kh.png" id="img">
+        <h2>José Antõnio da Silva Martins</h2>
+        <p>Advogado Trabalhista - São Paulo - Doutor em relações trabalhistas contemporâneas pela UNESP</p>
+        <h4>Atuo na área trabalhista a mais de 20 anos, possuo escritório localizado em São Paulo, premiado em diversas ocasiões. Me formei em direito na USP em 1986, fiz mestrado na UFRJ e doutorado na UNESP na área de relações contemporâneas de trabalho. Estou disposto...</h4>
+    </div>
 </div>
 {% endblock %}
-    
-    
+
+
 {% block scripts %}<script src="{{url_for('static', filename='Js/encontre.js')}}"></script>{% endblock %}

@@ -6,7 +6,7 @@ from collections import OrderedDict
 #from flask_admin.contrib.sqla import ModelView
 from passlib.apps import custom_app_context as pwd_context
 from application.helpers import env, login_required
-from application.models import Agendamento, Auth, Classe, Diferencial, Opfin, Service, Subclasse, Transaction, User
+from application.models import Auth, Classe, Educ, Experiencia, Cert, Horario, Prestador, Subclasse, Sugestao, Suporte, User
 
 main = Blueprint('main', __name__,
                         template_folder='templates')

@@ -9,12 +9,12 @@ app.config.from_object('config')
 jsglue = JSGlue(app)
 
 Session(app)
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, session_options={"autoflush": True})
 
 from application import views, models, forms, helpers
 from .views.admin import admin
 from .views.main import main
-app.register_blueprint(admin, url_prefix='/admin')
+#app.register_blueprint(admin, url_prefix='/admin')
 app.register_blueprint(main, url_prefix='/main')
 
 
@@ -29,6 +29,6 @@ helpers.env.globals['session'] = views.session
 #        response.headers["Expires"] = 0
 #        response.headers["Pragma"] = "no-cache"
 #        return response
-    
+
 
 # configure session to use filesystem (instead of signed cookies)

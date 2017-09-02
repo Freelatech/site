@@ -1,12 +1,336 @@
 {% extends "layout.html" %}
 
-{% block stylesheet %}<link rel="stylesheet" href="">{% endblock %}
+{% block stylesheet %}<link rel="stylesheet" href="{{ url_for('static', filename='CSS/oferecer.css') }}">{% endblock %}
 
 {% block title %}Ofereça serviços{% endblock %}
-
+{% set vars={'teste': True, 'atual':0} %}
 {% block main %}
-    <div>
-        <form id="offerform" action="{{ url_for('ofereça') }}" method="post">
+    <h1>Sobre {{prest.user_id}}</h1>
+    <form id="prestform" action="{{url_for('oferecer')}}" method="post">
+      <fieldset>
+        <input id="prestformvideourl" autocomplete="off" autofocus class="form-control" name="videourl" placeholder="Video url" type="text" value={{prest.videourl}} />
+        <p>(upload de fotos vai aqui)</p>
+        <textarea form="prestform" id="prestformdescricao" autocomplete="off" class="form-control" name="descricao" placeholder="Descrição" type="text" rows=3 >{{prest.descricao}}</textarea>
+        <textarea form="prestform" id="prestformsobre" autocomplete="off" class="form-control" name="sobre" placeholder="Sobre mim" type="text" rows=10 >{{prest.sobre}}</textarea>
+        <h2>Classe:</h2>
+            <div id="classes" class="formgroup">
+                {% for class in classes %}
+                    {% if classes[class]!="Outros" %}
+                    <input type="radio" name="classe" value="{{class}}" {% if class==prest.classe_id|string %} checked {{ vars.update({'teste': False}) }}{% endif %} >{{classes[class]}}<br>
+                    {% endif %}
+                {% endfor %}
+                <input type="radio" name="classe" value=1 {% if vars.teste %} checked {% endif %}>Outros<br>
+          </div>
+        <h2>Subclasse:</h2>
+        <div id="subclasses"></div>
+        <h2>Preço/hora:</h2>
+        <input id="prestformpreco" autocomplete="off" autofocus class="form-control" name="preco" placeholder="Preço" type="number" value={{prest.preco}}>
+    <!--</fieldset>
+    </form>-->
+    <h1>Horário</h1>
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modhor">Escolher Horário</button>
+<!-- Modal -->
+<div id="modhor" class="modal fade">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Selecionar horários</h4>
+      </div>
+      <div class="modal-body">
+        <!--<form id="horform" action="{{ url_for('ofereça') }}" method="post">-->
+        <!--<fieldset>-->
+        <input name="teste" type="text">
+            <table>
+                 <tr>
+                    <th>Dom</th>
+                    <th>Seg</th>
+                    <th>Ter</th>
+                    <th>Qua</th>
+                    <th>Qui</th>
+                    <th>Sex</th>
+                    <th>Sab</th>
+                </tr>
+                {% for j in range(0,48) %}
+                <tr>
+                {% for i in range(0,7) %}
+                <td>
+                    <input type="checkbox" name=horario value={{i*48+j}}
+                    {% if i*48+j==hor[vars.atual].horario %}
+                    checked
+                    {{ vars.update({'atual': vars['atual']+1}) }}
+                    {% endif %}
+                    >
+                    {% if j<20 %}0{% endif %}{{((j-j%2)/2)|int}}:{%if j%2==1 %}3{% else %}0{% endif %}0
+                </td>
+                {% endfor %}
+                </tr>
+                {% endfor %}
+                <tr>
+            </table>
+            <!--<div class="form-group">
+                <p id="geral" class="jsholders"></p>
+                <button class="btn btn-default" type="submit">Enviar</button>
+            </div>-->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+        </fieldset>
+        </form>
+    <h1>Currículo</h1>
+    <h2>Educação</h2>
+    <table id=eductable>
+    <tr>
+      <th>Instituição</th>
+      <th>Curso</th>
+      <th>Ano de início</th>
+      <th>Ano de conclusão</th>
+      <th>Descrição</th>
+    </tr>
+    {% for edu in educ %}
+    <tr>
+      <td>{{edu.instituicao}}</td>
+      <td>{{edu.curso}}Perma</td>
+      <td>{{edu.anoinicio}}</td>
+      <td>{{edu.anoconclusao}}</td>
+      <td>{{edu.descricao}}</td>
+    </tr>
+    {% endfor %}
+    {% for edu in tempeduc %}
+    <tr>
+      <td>{{edu.instituicao}}</td>
+      <td>{{edu.curso}}TEMP</td>
+      <td>{{edu.anoinicio}}</td>
+      <td>{{edu.anoconclusao}}</td>
+      <td>{{edu.descricao}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modcurso">Adicionar Curso</button>
+<!-- Modal -->
+<div id="modcurso" class="modal fade">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Adicionar curso</h4>
+      </div>
+      <div class="modal-body">
+           <form id="educform" action="{{ url_for('educ') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input id="educforminstituicao" autocomplete="off" autofocus class="form-control" name="instituicao" placeholder="Instituição" type="text"/>
+                <p id="nomeser" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="educformcurso" autocomplete="off" autofocus class="form-control" name="curso" placeholder="Curso" type="text"/>
+                <p id="imageurlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="educformanoinicio" autocomplete="off" autofocus class="form-control" name="anoinicio" placeholder="Ano de início" type="number"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="educformanoconclusao" autocomplete="off" autofocus class="form-control" name="anoconclusao" placeholder="Ano de conclusão" type="number"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="educformdescricao" autocomplete="off" autofocus class="form-control" name="descricao" placeholder="Descrição adicional" type="text"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <p id="geral" class="jsholders"></p>
+                <button class="btn btn-default" type="submit">Enviar</button>
+            </div>
+        </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="educclose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+        <h2>Experiência</h2>
+
+    <table id=exptable>
+    <tr>
+      <th>Local</th>
+      <th>Função</th>
+      <th>Ano de início</th>
+      <th>Ano de conclusão</th>
+      <th>Descrição</th>
+    </tr>
+    {% for ex in exp %}
+    <tr>
+      <td>{{ex.local}}</td>
+      <td>{{ex.funcao}}</td>
+      <td>{{ex.anoinicio}}</td>
+      <td>{{ex.anoconclusao}}</td>
+      <td>{{ex.descricao}}</td>
+    </tr>
+    {% endfor %}
+    {% for ex in tempexp %}
+    <tr>
+      <td>{{ex.local}}</td>
+      <td>{{ex.funcao}}</td>
+      <td>{{ex.anoinicio}}</td>
+      <td>{{ex.anoconclusao}}</td>
+      <td>{{ex.descricao}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modexp">Adicionar Experiência</button>
+<!-- Modal -->
+<div id="modexp" class="modal fade">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Adicionar experiência</h4>
+      </div>
+      <div class="modal-body">
+        <form id="expform" action="{{ url_for('experiencia') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input id="expformlocal" autocomplete="off" autofocus class="form-control" name="local" placeholder="Local" type="text"/>
+                <p id="nomeser" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="expformfuncao" autocomplete="off" autofocus class="form-control" name="funcao" placeholder="Função" type="text"/>
+                <p id="imageurlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="expformanoinicio" autocomplete="off" autofocus class="form-control" name="anoinicio" placeholder="Ano de admissão" type="number"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="expformanoconclusao" autocomplete="off" autofocus class="form-control" name="anoconclusao" placeholder="Ano de demissão" type="number"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="expformdescricao" autocomplete="off" autofocus class="form-control" name="descricao" placeholder="Atribuições" type="text"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <p id="geral" class="jsholders"></p>
+                <button class="btn btn-default" type="submit">Enviar</button>
+            </div>
+        </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="expclose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+        <h2>Certificações</h2>
+            <table id=certtable>
+    <tr>
+      <th>Local</th>
+      <th>Nome</th>
+      <th>Ano de início</th>
+      <th>Ano de conclusão</th>
+      <th>Descrição</th>
+    </tr>
+    {% for cer in cert %}
+    <tr>
+      <td>{{cert.local}}</td>
+      <td>{{cert.nome}}</td>
+      <td>{{cert.anoinicio}}</td>
+      <td>{{cert.anoconclusao}}</td>
+      <td>{{cert.descricao}}</td>
+    </tr>
+    {% endfor %}
+    {% for cer in tempcert %}
+    <tr>
+      <td>{{cert.local}}</td>
+      <td>{{cert.nome}}</td>
+      <td>{{cert.anoinicio}}</td>
+      <td>{{cert.anoconclusao}}</td>
+      <td>{{cert.descricao}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modcert">Adicionar Certificado</button>
+<!-- Modal -->
+<div id="modcert" class="modal fade">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Adicionar certificado</h4>
+      </div>
+      <div class="modal-body">
+<form id="certform" action="{{ url_for('certificacao') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input id="certformlocal" autocomplete="off" autofocus class="form-control" name="local" placeholder="Instituição/local" type="text"/>
+                <p id="nomeser" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="certformnome" autocomplete="off" autofocus class="form-control" name="nome" placeholder="Certificado" type="text"/>
+                <p id="imageurlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="certformanoinicio" autocomplete="off" autofocus class="form-control" name="anoinicio" placeholder="Ano de início (opcional)" type="number"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="certformanoconclusao" autocomplete="off" autofocus class="form-control" name="anoconclusao" placeholder="Ano de conclusao/expedição" type="number"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <input id="certformdescricao" autocomplete="off" autofocus class="form-control" name="descricao" placeholder="Descrição adicional" type="text"/>
+                <p id="videourlf" class="jsholders"></p>
+            </div>
+            <div class="form-group">
+                <p id="geral" class="jsholders"></p>
+                <button class="btn btn-default" type="submit">Enviar</button>
+            </div>
+        </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="certclose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+        <button class="btn btn-default" id="submitall">Salvar</button>
+
+
+{% endblock %}
+
+
+{% block scripts %}<script src="{{url_for('static', filename='Js/oferecer.js')}}"></script>{% endblock %}
+
+
+<!--<div>
+    <form id="offerform" action="{{ url_for('ofereça') }}" method="post">
         <fieldset>
             <div class="form-group">
                 <input id="nomeserf" autocomplete="off" autofocus class="form-control" name="nomeser" placeholder="Nome do serviço" type="text"/>
@@ -22,7 +346,7 @@
             </div>
             <div id="classes" class="formgroup">
                 {% for class in classes %}
-                    {% if classes[class]!="Outros" %}    
+                    {% if classes[class]!="Outros" %}
                     <input type="radio" name="classe" value="{{class}}">{{classes[class]}}<br>
                     {% endif %}
                 {% endfor %}
@@ -36,12 +360,26 @@
             </div>
         </fieldset>
         </form>
-        <textarea form="serviceform" id="description" autocomplete="off" class="form-control" name="description" placeholder="Descrição" type="text" rows=9></textarea>
-        {% if message %}
-        <h1>{{message}}</h1>
-        {% endif %}
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
     </div>
-{% endblock %}
-    
-    
-{% block scripts %}<script src="{{url_for('static', filename='Js/oferecer.js')}}"></script>{% endblock %}
+
+  </div>
+</div>
+
+
+
+        -->

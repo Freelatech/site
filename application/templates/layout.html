@@ -19,7 +19,7 @@
         <ul class="navbar-nav">
 			    <li id="" class="nav-item"><a href="{{url_for ('encontre') }}" class="nav-link">ENCONTRE UM PROFISSIONAL</a></li>
           <li id="" class="nav-item"><a href="{{url_for ('ofereça') }}" class="nav-link">OFEREÇA SERVIÇOS</a></li>
-          <li id="" class="nav-item"><a href="{{url_for ('teste') }}" class="nav-link">TESTE</a></li>
+          <!--<li id="" class="nav-item"><a href="{{url_for ('teste') }}" class="nav-link">TESTE</a></li>-->
             {% if session["user_id"] %}
           <!--<li id="" class="nav-item fr"><a href="{{url_for ('sair')}}" class="nav-link">SAIR</a></li>-->
           <!--<li id="" class="nav-item fr"><a href="{{url_for ('registrar')}}" class="nav-link">{{session["user_name"]}}</a></li>-->
@@ -39,12 +39,14 @@
         </ul>
   	  </div>
     </nav>
+    <div>
     {% block main %}{% endblock %}
+    </div>
     <footer>
         <div class="row justify-content-center">
           <div class="col-md-2 col-sm-3 col-xs-6">
             <h4><b>Usomix</b></h4>
-            <p><a href="{{url_for ('blog') }}">Blog</a></p>
+            <!--<p><a href="{{url_for ('blog') }}">Blog</a></p>-->
             <p><a href="{{url_for ('termos') }}">Termos de serviço</a></p>
             <p><a href="{{url_for ('privacidade')}}">Políticas de Privacidade</a></p>
           </div>
