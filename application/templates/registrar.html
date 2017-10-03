@@ -4,39 +4,38 @@
 
 {% block title %}    {% endblock %}
 
-{% block main %}    
+{% block main %}
     <div>
-    <form action="{{ url_for('registrar') }}" method="post">
-        <fieldset>
-            <div class="form-group">
-                <input id="emailf" autocomplete="off" autofocus class="form-control" name="email" placeholder="E-mail" type="text"/>
-                <p id="email" class="jsholders"></p>
-            </div>
-            <div class="form-group">
-                <input id="nomef" autocomplete="off" autofocus class="form-control" name="username" placeholder="Nome" type="text"/>
-                <p id="nome" class="jsholders"></p>
-            </div>
-            <div class="form-group">
-                <input id="senhaf" class="form-control" name="password" placeholder="Senha(min 6 caracteres)" type="password"/>
-                <p id="senha" class="jsholders"></p>
-            </div>
-            <div class="form-group">
-                <input id="senha1f" class="form-control" name="password2" placeholder="Confirme a senha" type="password"/>
-                <p id="senha1" class="jsholders"></p>
-            </div>
-            <div class="form-group">
-                <p id="geral" class="jsholders"></p>
-                <button class="btn btn-default" type="submit">Registrar</button>
-            </div>
-        </fieldset>
+    <form action="{{ url_for('registrar')}}" method="post">
+        <div>{{form.email.label}}:{{form.email()}}</div>
+        {% if form.email.errors %}
+            <ul class="errors">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <p id=emailf class=jsholders></p>
+        <div>{{form.nome.label}}:{{form.nome()}}</div>
+        {% if form.nome.errors %}
+            <ul class="errors">{% for error in form.nome.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <p id=nomef class=jsholders></p>
+        <div>{{form.senha.label}}:{{form.senha()}}</div>
+        {% if form.senha.errors %}
+            <ul class="errors">{% for error in form.senha.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <p id=senhaf class=jsholders></p>
+        <div>{{form.senha1.label}}:{{form.senha1()}}</div>
+        {% if form.senha1.errors %}
+            <ul class="errors">{% for error in form.senha1.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <p id=senha1f class=jsholders></p>
+        <div>{{form.submit()}}</div>
     </form>
     {% if message %}
         <h1>{{message}}</h1>
     {% endif %}
     </div>
 {% endblock %}
-    
-    
+
+
 {% block scripts %}<script src="{{url_for('static', filename='Js/io.js')}}"></script><script src="{{url_for('static', filename='Js/registrar.js')}}"></script>{% endblock %}
- 
-    
+
+

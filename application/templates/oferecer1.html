@@ -8,11 +8,11 @@
     <h1>Sobre {{prest.user_id}}</h1>
     <form id="prestform" action="{{url_for('oferecer')}}" method="post">
       <fieldset>
-        {{form.videourl.label}}:{{form.videourl()}}
-        {{form.imageurl.label}}:{{form.imageurl()}}
+        <input id="prestformvideourl" autocomplete="off" autofocus class="form-control" name="videourl" placeholder="Video url" type="text" value={{prest.videourl}} />
+        <input id="prestformimageurl" autocomplete="off" autofocus class="form-control" name="imageurl" placeholder="Image url" type="text" value={{prest.imageurl}} />
         <p>(upload de fotos vai aqui)</p>
-        {{form.descricao.label}}:{{form.descricao()}}
-        {{form.sobre.label}}:{{form.sobre()}}
+        <textarea form="prestform" id="prestformdescricao" autocomplete="off" class="form-control" name="descricao" placeholder="Descrição" type="text" rows=3 >{{prest.descricao}}</textarea>
+        <textarea form="prestform" id="prestformsobre" autocomplete="off" class="form-control" name="sobre" placeholder="Sobre mim" type="text" rows=10 >{{prest.sobre}}</textarea>
         <h2>Classe:</h2>
             <div id="classes" class="formgroup">
                 {% for class in classes %}
@@ -25,7 +25,7 @@
         <h2>Subclasse:</h2>
         <div id="subclasses"></div>
         <h2>Preço/hora:</h2>
-        {{form.preco.label}}:{{form.preco()}}
+        <input id="prestformpreco" autocomplete="off" autofocus class="form-control" name="preco" placeholder="Preço" type="number" value={{prest.preco}}>
     <!--</fieldset>
     </form>-->
     <h1>Horário</h1>

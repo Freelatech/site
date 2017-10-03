@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from flask_jsglue import JSGlue
 from flask_session import Session
+from flask_admin import Admin
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -11,11 +12,12 @@ jsglue = JSGlue(app)
 Session(app)
 db = SQLAlchemy(app, session_options={"autoflush": True})
 
+admin = Admin(app, name='usomix', template_mode='bootstrap3')
+
 from application import views, models, forms, helpers
-from .views.admin import admin
-from .views.main import main
-#app.register_blueprint(admin, url_prefix='/admin')
-app.register_blueprint(main, url_prefix='/main')
+from application.views import admin
+#from .views.main import main
+#app.register_blueprint(main, url_prefix='/main')
 
 
 

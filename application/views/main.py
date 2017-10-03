@@ -2,7 +2,6 @@ from application import app, db
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
 import json
 from collections import OrderedDict
-#from flask_admin import Admin
 #from flask_admin.contrib.sqla import ModelView
 from passlib.apps import custom_app_context as pwd_context
 from application.helpers import env, login_required

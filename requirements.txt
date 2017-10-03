@@ -1,0 +1,9 @@
+wtforms
+sqlalchemy
+flask
+passlib
+flask_sqlalchemy
+flask_jsglue
+flask_session
+flask_admin
+flask_mail

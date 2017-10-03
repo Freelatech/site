@@ -9,11 +9,11 @@ function preventform(){
 }
 
 function letformgo(){
-    if($("#nome").text()=="" && $("#email").text()=="" && $("#senha").text()=="" && $("#senha1").text()==""){
+    if($("#nomef").text()=="" && $("#emailf").text()=="" && $("#senhaf").text()=="" && $("#senha1f").text()==""){
       $("form").unbind();
     }
 }
-    
+
 function resize(){
       document.getElementsByTagName("footer")[0].style.marginTop= 0 +"px";
       bigbody();

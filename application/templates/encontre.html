@@ -44,14 +44,23 @@
         <h1>{{message}}</h1>
         {% endif %}
     </div>
-<div id="parent">
+<!--<div id="parent">
     <div id="card1">
         <img src="https://pickaface.net/gallery/avatar/unr_oldman1_170209_2337_9r91kh.png" id="img">
         <h2>José Antõnio da Silva Martins</h2>
         <p>Advogado Trabalhista - São Paulo - Doutor em relações trabalhistas contemporâneas pela UNESP</p>
         <h4>Atuo na área trabalhista a mais de 20 anos, possuo escritório localizado em São Paulo, premiado em diversas ocasiões. Me formei em direito na USP em 1986, fiz mestrado na UFRJ e doutorado na UNESP na área de relações contemporâneas de trabalho. Estou disposto...</h4>
     </div>
+</div>-->
+{% for p in prest %}
+<h1>{{p}}</h1>
+<div class="parent">
+    <img src="{{p.imageurl}}">
+    <h2>{{p.username.auth.username}}</h2>
+    <p>{{p.classe.nome}} - {{p.subclasse.nome}}</p>
+    <h4>{{p.descricao}}</h4>
 </div>
+{% endfor %}
 {% endblock %}
 
 

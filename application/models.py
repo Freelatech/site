@@ -8,7 +8,7 @@ class Auth(db.Model):
     passwordhsh = db.Column(db.String)
     method = db.Column(db.String)
     def __repr__(self):
-        return '<User %r>' % (self.username)
+        return '%r' % (self.username)
 
 class Classe(db.Model):
     __tablename__='classes'
@@ -16,6 +16,8 @@ class Classe(db.Model):
     nome=db.Column(db.String)
     subclasses = db.relationship('Subclasse', backref='classe', lazy='dynamic')
     prestadores = db.relationship('Prestador', backref='classe', lazy='dynamic')
+    def __repr__(self):
+        return '%r' % (self.nome)
 
 class Educ(db.Model):
     __tablename__='educ'
@@ -58,6 +60,7 @@ class Prestador(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     descricao=db.Column(db.Text, default="")
     sobre=db.Column(db.Text, default="")
+    imageurl=db.Column(db.String, default="")
     videourl=db.Column(db.String, default="")
     user_id=db.Column(db.Integer, db.ForeignKey("users.id"))
     classe_id=db.Column(db.Integer, db.ForeignKey("classes.id"), default=0)
@@ -86,6 +89,8 @@ class Subclasse(db.Model):
     classe_id=db.Column(db.Integer, db.ForeignKey("classes.id"))
     nome=db.Column(db.String)
     prestador=db.relationship('Prestador', backref='subclasse', lazy='dynamic')
+    def __repr__(self):
+        return '%r' % (self.nome)
 
 class Sugestao(db.Model):
     __tablename__='sugestoes'
@@ -115,5 +120,5 @@ class User(db.Model):
     referrees = db.relationship('User', backref=db.backref('referrer', remote_side='User.id'))
     prest = db.relationship('Prestador', backref='username', lazy='dynamic')
     def __repr__(self):
-        return '<User %r>' % (self.auth)
+        return '%r' % (self.auth)
 

@@ -1,12 +1,22 @@
 from application import app, db
 from sqlalchemy import or_
-from flask import flash, jsonify, redirect, render_template, request, session, url_for
+from flask import flash, jsonify, make_response, redirect, render_template, request, session, url_for
 import json
+#import admin
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
+import httplib2
+import requests
+import random
+import string
 from collections import OrderedDict
 from passlib.apps import custom_app_context as pwd_context
-from application.helpers import env, login_required
+from application.helpers import env, login_required, createUser, getUserInfo, getUserID
 from application.models import Auth, Classe, Educ, Experiencia, Cert, Horario, Prestador, Subclasse, Sugestao, Suporte, User
+from application.forms import LoginForm, RegisterForm, PrestForm, ExpForm
 
+CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
+APPLICATION_NAME = "Restaurant Menu Application"
 @app.route("/")
 def index():
     try:
@@ -34,7 +44,7 @@ def encontre():
         dargs[d]=True
     for h in hlist:
         hargs[h]=True
-    teste=Prestador.query.filter(or_(*dargs)).filter(or_(*hargs)).filter_by(**kwargs).all()
+    prest=Prestador.query.filter(or_(*dargs)).filter(or_(*hargs)).filter_by(**kwargs).all()
     classes=Classe.query.order_by(Classe.nome).all()
     string="{"
     for i in range(len(classes)):
@@ -47,27 +57,23 @@ def encontre():
     #x=Prestador.query.all()
     #teste=x[0].horarios.filter_by(status=True).all()
     #teste=Prestador.query.filter(Prestador.horarios[10].has(status=False)).all()
-    return render_template("encontre.html", classes=jsonstring, teste=teste)
+    return render_template("encontre.html", classes=jsonstring, prest=prest)
 
 @app.route("/entrar", methods=["GET", "POST"])
 def entrar():
-    if request.method == "POST":
-        if not request.form.get("email"):
-            return render_template("entrar.html", message="Não há email", dest=request.args.get("dest"))
-        # ensure password was submitted
-        elif not request.form.get("password"):
-            return render_template("entrar.html", message="Não há senha", dest=request.args.get("dest"))
-        #query database for username
+    form = LoginForm(request.form)
+    if request.method == "POST" and form.validate():
+        print("passou")
         try:
-            prevrows = User.query.filter_by(email=request.form.get("email")).one()
+            prevrows = User.query.filter_by(email=form.email.data).one()
             rows = Auth.query.filter_by(user_id=prevrows.id).one()
         except:
             try:
-                rows = Auth.query.filter_by(username=request.form.get("email")).one()
+                rows = Auth.query.filter_by(username=form.email.data).one()
             except:
                 return render_template("entrar.html", message="email/usuário inexistente", dest=request.args.get("dest"))
         # ensure username exists and password is correct
-        if not pwd_context.verify(request.form.get("password"), rows.passwordhsh):
+        if not pwd_context.verify(form.senha.data, rows.passwordhsh):
             return render_template("entrar.html", message="email/usuário ou senha incorretos", dest=request.args.get("dest"))
         session["user_id"] = rows.user_id
         session["user_name"] = rows.username.upper()
@@ -81,16 +87,192 @@ def entrar():
             return redirect(url_for('index'))
 
     else:
+        state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in range(32))
+        session['state'] = state
         try:
             teste=session["user_id"]
             return redirect(url_for('encontre'))
         except:
-            return render_template("entrar.html",dest=request.args.get("dest"))
+            return render_template("entrar.html", STATE=state, dest=request.args.get("dest"),form=form)
+
+@app.route("/fbconnect")
+def fbconnect():
+    print ("1")
+    if request.args.get('state') != session['state']:
+        print("if")
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    print("else")
+    access_token = request.data
+    print ("access token received %s" % access_token)
+
+
+    app_id = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_id']
+    app_secret = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+    url = 'https://graph.facebook/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % app_id, app_secret, access_token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+
+    # Use token to get user info from API
+    userinfo_url = "https://graph.facebook.com/v2.8/me"
+    token = result.split(',')[0].split(':')[1].replace('"', '')
+    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    data = json.loads(result)
+    session['provider'] = 'facebook'
+    session['username'] = data["name"]
+    session['email'] = data['email']
+    session['facebook_id'] = data['id']
+
+    # The token must be stored in the session in order to properly logout
+    session['access_token'] = token
+
+    # Get user picture
+    url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    data = json.loads(result)
+
+    session['picture'] = data["data"]["url"]
+
+    #see if user exists
+    #if not create one
+
+    output = ''
+    output += '<h1>Welcome, '
+    output += session['username']
+
+    output += '!</h1>'
+    output += '<img src="'
+    output += session['picture']
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+
+    flash("Now logged in as %s" % session['username'])
+    return output
+
+
+@app.route('/fbdisconnect')
+def fbdisconnect():
+    facebook_id = session['facebook_id']
+    # The access token must me included to successfully logout
+    access_token = session['access_token']
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+    h = httplib2.Http()
+    result = h.request(url, 'DELETE')[1]
+    return "you have been logged out"
+
+
+@app.route('/gdisconnect')
+def gdisconnect():
+    #Only disconnect a connected user
+    access_token = session.get('access_token')
+    if access_token is None:
+        response = make_response(
+            json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    if result['status'] == '200':
+        del session['access_token']
+        del session['gplus_id']
+        del session['username']
+        del session['email']
+        del session['picture']
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return reponse
+    else:
+        response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 @app.route("/FAQ")
 def FAQ():
     return render_template("FAQ.html")
 
+@app.route("/gconnect", methods=["POST"])
+def gconnect():
+    if request.args.get('state') != session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    code = request.data
+    try:
+        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow.redirect_uri = 'postmessage'
+        credentials = oauth_flow.step2_exchange(code)
+    except FlowExchangeError:
+        response = make_response(json.dumps('Failed to upgrade the authorization code.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    #Check that the access token is valid
+    access_token = credentials.access_token
+    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
+    h = httplib2.Http()
+    result = json.loads(h.request(url, 'GET')[1])
+    #If there was an error in the access info, abort.
+    if result.get('error') is not None:
+        response = make_response(json.dumps(result.get('error')), 500)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    #Verify that the access token is used for the intended user
+    gplus_id = credentials.id_token['sub']
+    if result['user_id'] != gplus_id:
+        response = make_response(
+            json.dumps("Token's user ID doesn't match given user ID."), 401)
+        respnse.headers['Content-Type']
+        return response
+
+    # Verify that the access token is valid for this app
+    if result['issued_to'] != CLIENT_ID:
+        responde = make_response(
+            json.dumps("Token's client ID does not match app's"),401)
+        print ("Token's client ID does not match app's.")
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    stored_access_token = session.get('access_token')
+    stored_gplus_id = session.get('gplus_id')
+    if stored_access_token is not None and gplus_id == stored_gplus_id:
+        response = make_response(json.dumps('Current user is already connected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    session['access_token'] = credentials.access_token
+    session['gplus_id'] = gplus_id
+
+    #Get user info
+    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+    params = {'access_token': credentias.access_token, 'alt': "json"}
+    answer = request.get(userinfo_url, params=params)
+
+    data = answer.json()
+
+    session['username'] = data['name']
+    session['picture'] = data['picture']
+    session['email'] = data['email']
+    session['provider'] = 'google'
+
+    #ver se o usuário existe, se não, criar um novo
+    #Implementar aqui
+
+    output = ''
+    output += '<h1>Welcome, '
+    output += session['username']
+    output += '!</h1>'
+    output += '<img src="'
+    output += session['picture']
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    flash("you are now logged in as %s" % login_session['username'])
+    print ("done!")
+    return output
 
 @app.route("/getsubclasses/<classid>")
 def getsubclasses(classid):
@@ -117,16 +299,18 @@ def myusers():
 
 @app.route("/oferecer", methods=["GET","POST"])
 def oferecer():
-    if request.method=="POST":
+    form = PrestForm(request.form)
+    if request.method=="POST" and form.validate():
         prest=Prestador.query.filter_by(user_id=session["user_id"]).one()
-        prest.videourl=request.form.get("videourl")
-        prest.descricao=request.form.get("descricao")
-        prest.sobre=request.form.get("sobre")
+        prest.imageurl=form.imageurl.data
+        prest.videourl=form.videourl.data
+        prest.descricao=form.descricao.data
+        prest.sobre=form.sobre.data
         prest.classe_id=request.form.get("classe")
         prest.subclasse_id=request.form.get("subclasse")
-        prest.preco=request.form.get("preco")
+        prest.preco=form.preco.data
         hor=Horario.query.filter_by(prest_id=prest.id).order_by(Horario.horario).all()
-        horlist=request.form.getlist('horario')
+        horlist=request.form.get("horario")
         print(horlist)
         prest.seg=False
         prest.ter=False
@@ -235,8 +419,13 @@ def oferecer():
                 horario=337,
                 status=True
             )
+        form.videourl.data=prest.videourl
+        form.imageurl.data=prest.imageurl
+        form.descricao.data=prest.descricao
+        form.sobre.data=prest.sobre
+        form.preco.data=prest.preco
         hor.append(new_hor)
-        return render_template("oferecer.html",classes=jsonstring,prest=prest,educ=educ,cert=cert,exp=exp,tempeduc=session["tempeduc"],tempcert=session["tempcert"],tempexp=session["tempexp"],hor=hor)
+        return render_template("oferecer.html",form=form,classes=jsonstring,prest=prest,educ=educ,cert=cert,exp=exp,tempeduc=session["tempeduc"],tempcert=session["tempcert"],tempexp=session["tempexp"],hor=hor)
 
 @app.route("/ofereça")
 def ofereça():
@@ -271,36 +460,19 @@ def privacidade():
 @app.route("/registrar",  methods=["GET", "POST"])
 def registrar():
     """Register user"""
-
+    form=RegisterForm(request.form)
     # if user reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
-
-        if not request.form.get("email"):
-            return render_template("registrar.html", message="Não há email")
-
-        #ensure username was submitted
-        elif not request.form.get("username"):
-            return render_template("registrar.html", message="Não há nome de usuário")
-
-        # ensure password was submitted
-        elif not request.form.get("password"):
-            return render_template("registrar.html", message="Não há senha")
-
-        elif len(request.form.get("password"))<6:
-            return render_template("registrar.html", message="Senha muito curta")
-
-        elif request.form.get("password")!=request.form.get("password2"):
-            return render_template("registrar.html", message="Senhas diferentes")
+    if request.method == "POST" and form.validate():
 
         #query database for username
-        userrows = Auth.query.filter_by(username=request.form.get("username")).all()
+        userrows = Auth.query.filter_by(username=form.nome.data).all()
 
         # ensure username exists and password is correct
         if len(userrows) != 0:
             return render_template("registrar.html", message="Usuário já em uso")
 
         #query database for username
-        emailrows = User.query.filter_by(email=request.form.get("email")).all()
+        emailrows = User.query.filter_by(email=form.email.data).all()
 
         # ensure username exists and password is correct
         if len(emailrows) != 0:
@@ -308,15 +480,15 @@ def registrar():
 
 
         new_user = User(
-                         email=request.form.get("email"),
+                         email=form.email.data,
                         )
         db.session.add(new_user)
         db.session.flush()
         user_id=new_user.id
         new_auth = Auth(
                         user_id=new_user.id,
-                        username=request.form.get("username"),
-                        passwordhsh=pwd_context.hash(request.form.get("password")),
+                        username=form.nome.data,
+                        passwordhsh=pwd_context.hash(form.senha.data),
                         method="Common"
                         )
         new_prest = Prestador(
@@ -337,7 +509,7 @@ def registrar():
         return redirect(url_for("entrar"))
 
     else:
-        return render_template("registrar.html")
+        return render_template("registrar.html", form=form)
 
 
 @app.route("/sair", methods=["GET","POST"])
@@ -418,6 +590,8 @@ def certificacao():
 
 @app.route("/experiencia", methods=["POST"])
 def experiencia():
+    form=ExpForm(request.form)
+    print(form.local.data)
     prest=Prestador.query.filter_by(user_id=session["user_id"]).one()
     new_exp=Experiencia(
                 prest_id=prest.id,

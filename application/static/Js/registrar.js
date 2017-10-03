@@ -23,16 +23,16 @@ function validateEmail(email) {
 }
 
 function verifyemail(){
-  path=$("#emailf").val();
+  path=$("#email").val();
   if(validateEmail(path)==false){
-    $("#email").text("Email inválido");
+    $("#emailf").text("Email inválido");
     return true;
   }
   exists=false;
   $.getJSON(Flask.url_for("verifyemail",{path:path}), function(data){
     if(data.emailexists){
       exists=true;
-      $("#email").text("Email já em uso");
+      $("#emailf").text("Email já em uso");
       return true;
     }
   });
@@ -40,29 +40,29 @@ function verifyemail(){
 }
 
 function verifyuser(){
-  pat=$("#nomef").val();
+  pat=$("#nome").val();
   exists=false;
   $.getJSON(Flask.url_for("verifyuser",{pat}), function(data){
     if(data.userexists){
       exists=true;
-      $("#nome").text("Nome de usuário já em uso");
+      $("#nomef").text("Nome de usuário já em uso");
     }
   });
   return exists;
 }
-  
+
 $(function(){
-  verifier("#emailf", "#email", "Não há email", verifyemail);
-  verifier("#nomef", "#nome", "Não há nome", verifyuser);
-  verifier("#senhaf", "#senha", "Não há senha", senhaf);
-  verifier("#senha1f", "#senha1", "Confirme a senha", senha1f);
-/*  $("#senha1f").focusout(function(){
-      if ($("#senha1f").val()==""){
-          $("#senha1").text("Confirme a senha");
+  verifier("#email", "#emailf", "Não há email", verifyemail);
+  verifier("#nome", "#nomef", "Não há nome", verifyuser);
+  verifier("#senha", "#senhaf", "Não há senha", senhaf);
+  verifier("#senha1", "#senha1f", "Confirme a senha", senha1f);
+  $("#senha1").focusout(function(){
+      if ($("#senha1").val()==""){
+          $("#senha1f").text("Confirme a senha");
           preventform();
       }
-      else if($("senhaf").value != $("senha")){
-           $("#senha1").text("As senhas não correspondem");
+      else if($("senha").value != $("senha1").value){
+           $("#senha1f").text("As senhas não correspondem");
            preventform();
       }
       else{
@@ -71,6 +71,6 @@ $(function(){
       }
       resize();
   });
-*/
+
 
 })
